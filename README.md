@@ -14,16 +14,19 @@ About the Project
 There is Signup page  where user can create there account with name, email, password.
 
 Signup page :
+
   ![alt text](Demo/SignUp.png)
 
 there is Login page where user can login using username and password 
 
 Login Page:
+
  ![alt text](Demo/login.png)
 
  After login user will see availabe users to chat and online users also
 
  Chat Opening:
+ 
  ![alt text](Demo/chatopening.png)
 
  Users can do chat 
