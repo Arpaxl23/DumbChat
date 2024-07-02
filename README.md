@@ -44,17 +44,24 @@ Watch the demo video below:
 ## Installation
 
 1.Open the folder chatapp
+
 2.There are two folder frontend and backend.
+
 3.set up .env file 
 
 PORT=...
 CONNECTION_STRING1=...
 JWT_SECRET=...
 NODE_ENV=...
+
 5.Now  on root folder npm init
+
 6.Now cd frontend
+
   npm init
+  
 7.Now in cd backend run the command   npx nodemon server.js
+
 8.In frontend  run  command    npm run dev
 
 
