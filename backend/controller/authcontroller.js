@@ -1,60 +1,73 @@
  const User=require("../Models/user.Model");
  const bcrypt=require("bcryptjs");
- const genToken=require("../utils/generateToken")
- const signup=async(req,res)=>{
-   try{
-    const{fullname,username,password,confirmPassword,gender}=req.body;
-    if(password!=confirmPassword){
-        return res.status(400).json({error:"password do not match"});
-    }
-    const user= await User.findOne({username});
-    if(user){
-        return res.status(400).json({error:"Username already exists"});
-    }
-    //Hash password here
-    const salt=await bcrypt.getSalt(10);
-    const hashedPassword=await bcrypt.hash(password,salt);
-    //https://avatar-placeholder.iran.liara.run/
+ const genToken =require("../utils/generateToken.js");
 
-    const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-	const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+ const signup = async (req, res) => {
+	try {
+		const { fullName,emailId, username, password, confirmPassword, gender } = req.body;
 
+		if (password !== confirmPassword) {
+			return res.status(400).json({ error: "Passwords don't match" });
+		}
+
+		const user = await User.findOne({ username });
+
+		if (user) {
+			return res.status(400).json({ error: "Username already exists" });
+		}
+
+		// Hashing
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(password, salt);
+
+		// https://avatar-placeholder.iran.liara.run/
+
+		const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
+		const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+
+		// const boyProfilePic = `https://avatars.dicebear.com/api/micah/${username}.svg?mood[]=happy`;
+		// const girlProfilePic = `https://avatars.dicebear.com/api/micah/${username}.svg?mood[]=happy`;
+		
+		// const boyProfilePic = `https://robohash.org/${username}?set=set1`;
+		// const girlProfilePic = `https://robohash.org/${username}?set=set4`;
+	    
 		const newUser = new User({
 			fullName,
+			emailId,
 			username,
 			password: hashedPassword,
 			gender,
 			profilePic: gender === "male" ? boyProfilePic : girlProfilePic,
 		});
 
-        if(newUser){
-            genToken(newuser._id.res);
-            await newUser.save();
+		if (newUser) {
+			// Generate JWT token here
+			genToken(newUser._id, res);
+			await newUser.save();
 
-            res.status(201).json({
-                _id: newUser._id,
+			res.status(201).json({
+				_id: newUser._id,
 				fullName: newUser.fullName,
 				username: newUser.username,
+				emailId:  newUser.emailId,
 				profilePic: newUser.profilePic,
-            });
-        }else {
+			});
+		} else {
 			res.status(400).json({ error: "Invalid user data" });
 		}
-
-
-   }catch(error){
-    console.log("Error in signup controller", error.message);
+	} catch (error) {
+		console.log("Error in signup controller", error.message);
 		res.status(500).json({ error: "Internal Server Error" });
-   }
-
+	}
 };
- const login=async(req,res)=>{
-    try{
-        const {Username,password}=req.body;
-        const user=await User.findOne({username});
-        const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
-        if (!user || !isPasswordCorrect) {
+ const login = async (req, res) => {
+	try {
+		const { username, password } = req.body;
+		const user = await User.findOne({ username });
+		const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
+
+		if (!user || !isPasswordCorrect) {
 			return res.status(400).json({ error: "Invalid username or password" });
 		}
 
@@ -66,24 +79,21 @@
 			username: user.username,
 			profilePic: user.profilePic,
 		});
-
-    }catch(error){
-        console.log("Error in login controller", error.message);
+	} catch (error) {
+		console.log("Error in login controller", error.message);
 		res.status(500).json({ error: "Internal Server Error" });
-    }
+	}
 };
- const logout=(req,res)=>{
-    try{
-        res.cookie("jwt","",{maxAge:0});
-        res.status(200).json({message:"Successfully logged out"});
-    }catch(error){
-        console.log("Error in logout controller", error.message);
-        res.status(500).json({error:"internal server error"});
-    }
+
+ const logout = (req, res) => {
+	try {
+		res.cookie("jwt", "", { maxAge: 0 });
+		res.status(200).json({ message: "Logged out successfully" });
+	} catch (error) {
+		console.log("Error in logout controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
 };
+
+module.exports={signup,login,logout};
  
-module.exports = {
-    signup,
-    login,
-    logout
-};
