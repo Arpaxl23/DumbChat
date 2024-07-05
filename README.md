@@ -67,6 +67,12 @@ NODE_ENV=...
 
 Project should run , and setup accordingly if some issue arises.
 
+# Key issues 
+There may be problem with zustand  react-icons react-hot-toast react-router-dom  in frontend so install it  as   /frontend> npm i .....(all mentioned )' , also vite may be.
+
+There may be have to install in backend as   /backend> npm i socket.io
+
+
 You can connect frontend port other than 3000 as mentioned in folder as your available project.
 
  
